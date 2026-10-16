@@ -1,0 +1,32 @@
+name: DevSecOps
+on: [pull_request, push]
+permissions:
+  contents: read
+  security-events: write
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    env:
+      PIPELINE_TOKEN: ${{ secrets.PIPELINE_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install Lima e Silva toolkit
+        run: if [ -f manifest.json ] && [ -f pipeline-install.mjs ] && [ -f pipeline/sast/sast-agent.mjs ]; then node pipeline-install.mjs --offline --dest .; else curl --fail --proto '=https' --tlsv1.2 -o pipeline-install.mjs https://agentes.limaesilvatecnologia.com.br/downloads/devsecops-toolkit/1.0.0/install.mjs && node pipeline-install.mjs --dest .; fi
+      - name: Test Console connection
+        run: node pipeline/check-connection.mjs --agents pipeline-sast
+      - name: SAST
+        run: node pipeline/sast/sast-agent.mjs --source . --out artifacts/sast --fail-on high --release "$GITHUB_RUN_ID" --repository "$GITHUB_REPOSITORY" --commit "$GITHUB_SHA" --branch "$GITHUB_REF_NAME" --upload https://thiago.limaesilvatecnologia.com.br/console/api/pipeline/ingest --token "$PIPELINE_TOKEN" --require-upload
+      - name: Publish SARIF to Code Scanning
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: artifacts/sast/sast.sarif
+      - name: Archive security artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: devsecops-results
+          path: artifacts/
