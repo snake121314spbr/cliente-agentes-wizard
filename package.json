@@ -1,0 +1,10 @@
+{
+  "name": "@lima-e-silva/devsecops-toolkit",
+  "version": "1.0.0",
+  "private": false,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "description": "Lima e Silva DevSecOps pipeline agents; source remains in the customer's CI."
+}

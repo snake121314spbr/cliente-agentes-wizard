@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "version": "1.0.0",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 1757,
+      "sha256": "f2241eb63b5e59fd1c73eba33857f1b72b5ec9ef3ff75661b607bf9f317924a8"
+    },
+    {
+      "path": "package.json",
+      "bytes": 246,
+      "sha256": "6be028cf26d0edd7d0d30a5533f0f8aa00d273c0aeec5255ef6d2527fa43769f"
+    },
+    {
+      "path": "pipeline/check-connection.mjs",
+      "bytes": 2327,
+      "sha256": "6c73610a51963b55a945f2142861379a2ffa8663e4d4d4b8c9daac96f8c9195d"
+    },
+    {
+      "path": "pipeline/rasp/rasp-contract-agent.mjs",
+      "bytes": 4006,
+      "sha256": "45937b782a77c5d742730cc417741dde634f3c971bdb48e753c2e3c520cdef28"
+    },
+    {
+      "path": "pipeline/rasp/rasp-contract.mjs",
+      "bytes": 5479,
+      "sha256": "8327b94198d5e002bfd8299e4fe4e2d105f7f751f04333e7781473c651069f3b"
+    },
+    {
+      "path": "pipeline/sast/core.mjs",
+      "bytes": 14689,
+      "sha256": "976e184c050b9b28f21234571cb49ecc31a95e0a4b013a24f7387653c4ccc7e8"
+    },
+    {
+      "path": "pipeline/sast/sast-agent.mjs",
+      "bytes": 5189,
+      "sha256": "e8fb5f3947cb27a9a69fa21e48ae8944b587f328e7752e6676879e1c60ea6728"
+    },
+    {
+      "path": "pipeline/sast/upload.mjs",
+      "bytes": 3018,
+      "sha256": "7cb35ca6851209df0fccb60932f6ad0bcd523b4fd57d16aca9bf5a4bb014c2ba"
+    },
+    {
+      "path": "pipeline/sca/core.mjs",
+      "bytes": 10388,
+      "sha256": "39b0e2e1b6665fd12ed0ce8a789dcb1e4e7211180a7cc7f2c64150e69489fc6a"
+    },
+    {
+      "path": "pipeline/sca/sca-agent.mjs",
+      "bytes": 4639,
+      "sha256": "8e2650eb15d350463a2e1c1605e79e832144024ebe1fe2fd9de3c1f401e499d0"
+    },
+    {
+      "path": "pipeline/threat-model/core.mjs",
+      "bytes": 6198,
+      "sha256": "d1351a15635a7376ae5e82fcdf1fd1575308d74bcc8ad324cdef68afe00c0f23"
+    },
+    {
+      "path": "pipeline/threat-model/threat-model-agent.mjs",
+      "bytes": 4207,
+      "sha256": "6027ad9fe2f31be8255f5e7b5cd67b88985a4a316d634946b8af76775dc9db01"
+    }
+  ]
+}
