@@ -18,7 +18,7 @@ jobs:
       - name: Test Console connection
         run: node pipeline/check-connection.mjs --agents pipeline-sast
       - name: SAST
-        run: node pipeline/sast/sast-agent.mjs --source . --out artifacts/sast --fail-on high --release "$GITHUB_RUN_ID" --repository "$GITHUB_REPOSITORY" --commit "$GITHUB_SHA" --branch "$GITHUB_REF_NAME" --upload https://thiago.limaesilvatecnologia.com.br/console/api/pipeline/ingest --token "$PIPELINE_TOKEN" --require-upload
+        run: node pipeline/sast/sast-agent.mjs --source . --out artifacts/sast --fail-on high --release "$GITHUB_RUN_ID" --repository "$GITHUB_REPOSITORY" --commit "$GITHUB_SHA" --branch "$GITHUB_REF_NAME" --upload https://thiago.limaesilvatecnologia.com.br/console/api/pipeline/ingest --token "$PIPELINE_TOKEN" --require-upload --ai-review --allow-ai-code-sharing --require-ai
       - name: Publish SARIF to Code Scanning
         if: always()
         uses: github/codeql-action/upload-sarif@v3
