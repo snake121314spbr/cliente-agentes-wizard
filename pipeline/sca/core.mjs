@@ -1,6 +1,7 @@
 import {createHash} from 'node:crypto';
 import {readFile} from 'node:fs/promises';
 import path from 'node:path';
+import {originFromMetadata} from '../origin.mjs';
 
 /**
  * Deterministic dependency inventory for CI.
@@ -208,6 +209,7 @@ export function toJunit(result) {
 }
 
 export function normalizeForUpload(result, metadata = {}) {
+  const origin = originFromMetadata(metadata);
   return {
     schemaVersion: SCHEMA_VERSION,
     agentId: 'pipeline-sca',
@@ -216,6 +218,7 @@ export function normalizeForUpload(result, metadata = {}) {
     repository: clean(metadata.repository),
     commit: clean(metadata.commit),
     branch: clean(metadata.branch),
+    origin,
     advisoryMode: result.advisoryMode,
     policy: result.policy,
     stats: result.stats,
