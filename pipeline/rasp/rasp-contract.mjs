@@ -1,4 +1,5 @@
 import {readFile} from 'node:fs/promises';
+import {originFromMetadata} from '../origin.mjs';
 
 export const SCANNER_VERSION = '1.0.0';
 const SECRET_KEYS = /(?:password|passwd|secret|token|authorization|private.?key|cookie)/i;
@@ -61,6 +62,7 @@ export function normalizeForUpload(result, metadata = {}) {
     repository: text(metadata.repository),
     commit: text(metadata.commit),
     branch: text(metadata.branch),
+    origin: originFromMetadata(metadata),
     policy: result.policy,
     stats: result.stats,
     issues: (result.issues || []).slice(0, 1000).map(item => ({
