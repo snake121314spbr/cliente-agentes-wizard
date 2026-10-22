@@ -1,66 +1,81 @@
 {
   "schemaVersion": 1,
-  "version": "1.0.0",
+  "version": "1.1.0",
   "files": [
     {
       "path": "README.md",
-      "bytes": 1757,
-      "sha256": "f2241eb63b5e59fd1c73eba33857f1b72b5ec9ef3ff75661b607bf9f317924a8"
+      "bytes": 3007,
+      "sha256": "cf078582570cba554246fb334af1241c9fc50364d6f3e5b60cecae656dabb3b9"
     },
     {
       "path": "package.json",
-      "bytes": 246,
-      "sha256": "6be028cf26d0edd7d0d30a5533f0f8aa00d273c0aeec5255ef6d2527fa43769f"
+      "bytes": 267,
+      "sha256": "a5f1b6def6bdfd8c154856958467ab4b727fc8908ca69764e0a01edc150bac17"
     },
     {
       "path": "pipeline/check-connection.mjs",
-      "bytes": 2327,
-      "sha256": "6c73610a51963b55a945f2142861379a2ffa8663e4d4d4b8c9daac96f8c9195d"
+      "bytes": 2803,
+      "sha256": "e46b0c81c952d19c485643b8866f0c0af30e95d4783299f55692ff72fffd1125"
+    },
+    {
+      "path": "pipeline/origin.mjs",
+      "bytes": 907,
+      "sha256": "3bef8c9227a39deee87dca0e1defce34e06692a6e7a0f27b4956ced0718325ef"
+    },
+    {
+      "path": "pipeline/owasp-fix-studio.mjs",
+      "bytes": 15168,
+      "sha256": "3f4cf7407a1035c647f101cbdf03ff3f3e042cd9d8a841e2a66ad21867c5944b"
     },
     {
       "path": "pipeline/rasp/rasp-contract-agent.mjs",
-      "bytes": 4006,
-      "sha256": "45937b782a77c5d742730cc417741dde634f3c971bdb48e753c2e3c520cdef28"
+      "bytes": 4567,
+      "sha256": "9f04b660e32ecbecb54be8208c7b4aceeadc7af8aa004506ba4a981ad9142f1a"
     },
     {
       "path": "pipeline/rasp/rasp-contract.mjs",
-      "bytes": 5479,
-      "sha256": "8327b94198d5e002bfd8299e4fe4e2d105f7f751f04333e7781473c651069f3b"
+      "bytes": 5571,
+      "sha256": "9b444ed96522120bb23b24bac3362277acc3f4ba4fb1e074fc20f5f0a2b4c316"
+    },
+    {
+      "path": "pipeline/sast/ai-review.mjs",
+      "bytes": 9267,
+      "sha256": "764744afc6dc35f5c801cd4f9917d387f5284f75049ef9f0196e0febb657dc2d"
     },
     {
       "path": "pipeline/sast/core.mjs",
-      "bytes": 14689,
-      "sha256": "976e184c050b9b28f21234571cb49ecc31a95e0a4b013a24f7387653c4ccc7e8"
+      "bytes": 15445,
+      "sha256": "3e78013cf7cfca88da65ef4d13039d6a09fb4c86f4343bace0b23b016ee869f2"
     },
     {
       "path": "pipeline/sast/sast-agent.mjs",
-      "bytes": 5189,
-      "sha256": "e8fb5f3947cb27a9a69fa21e48ae8944b587f328e7752e6676879e1c60ea6728"
+      "bytes": 7471,
+      "sha256": "b98b32918d5db2315797dced32d461a0efec93e6ecb76a3786a230f049a404e7"
     },
     {
       "path": "pipeline/sast/upload.mjs",
-      "bytes": 3018,
-      "sha256": "7cb35ca6851209df0fccb60932f6ad0bcd523b4fd57d16aca9bf5a4bb014c2ba"
+      "bytes": 4473,
+      "sha256": "cdb76172b5b3b9c24b6e5fd5fbc5130d223165b8369a437a44c65314129b311d"
     },
     {
       "path": "pipeline/sca/core.mjs",
-      "bytes": 10388,
-      "sha256": "39b0e2e1b6665fd12ed0ce8a789dcb1e4e7211180a7cc7f2c64150e69489fc6a"
+      "bytes": 10497,
+      "sha256": "6b9212aa50979c086cee4188e117f0e93ea7c7b53173d4d66fbdffcf3f1fe618"
     },
     {
       "path": "pipeline/sca/sca-agent.mjs",
-      "bytes": 4639,
-      "sha256": "8e2650eb15d350463a2e1c1605e79e832144024ebe1fe2fd9de3c1f401e499d0"
+      "bytes": 5329,
+      "sha256": "9874b8e2ff6f294a515750ddde0550743f30b448ffbae8917270c9d4efaf8101"
     },
     {
       "path": "pipeline/threat-model/core.mjs",
-      "bytes": 6198,
-      "sha256": "d1351a15635a7376ae5e82fcdf1fd1575308d74bcc8ad324cdef68afe00c0f23"
+      "bytes": 6286,
+      "sha256": "dbd4d502e3d43e9c03b0f514587d96aaed09ef8f445db3f37a9612e2b9170566"
     },
     {
       "path": "pipeline/threat-model/threat-model-agent.mjs",
-      "bytes": 4207,
-      "sha256": "6027ad9fe2f31be8255f5e7b5cd67b88985a4a316d634946b8af76775dc9db01"
+      "bytes": 4800,
+      "sha256": "2b9a3895287eea8bc7a9b57ccd808fb3370a2866f109701ef3ea0ae798a2d2b6"
     }
   ]
 }

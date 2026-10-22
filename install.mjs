@@ -3,7 +3,7 @@ import {mkdir, readFile, writeFile} from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
 
-const BASE_URL = 'https://agentes.limaesilvatecnologia.com.br/downloads/devsecops-toolkit/1.0.0/';
+const BASE_URL = 'https://agentes.limaesilvatecnologia.com.br/downloads/devsecops-toolkit/1.1.0/';
 const args = process.argv.slice(2);
 let destination = '.';
 let offline = false;
@@ -23,7 +23,7 @@ const manifest = manifestText ? JSON.parse(manifestText) : await (async () => {
   if (!response.ok) throw new Error(`Manifesto indisponível: HTTP ${response.status}`);
   return response.json();
 })();
-if (manifest.version !== '1.0.0' || !Array.isArray(manifest.files)) throw new Error('Manifesto incompatível');
+if (manifest.version !== '1.1.0' || !Array.isArray(manifest.files)) throw new Error('Manifesto incompatível');
 for (const entry of manifest.files) {
   if (!entry || typeof entry.path !== 'string' || !/^[A-Za-z0-9._/-]+$/.test(entry.path) || entry.path.includes('..') || entry.path.startsWith('/')) throw new Error('Caminho recusado no manifesto');
   const target = path.resolve(root, entry.path);
