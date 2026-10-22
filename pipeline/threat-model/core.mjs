@@ -1,4 +1,5 @@
 import {createHash} from 'node:crypto';
+import {originFromMetadata} from '../origin.mjs';
 
 export const SCANNER_VERSION = '1.0.0';
 export const SCHEMA_VERSION = '1.0';
@@ -64,5 +65,5 @@ export function toJunit(result) {
 }
 
 export function normalizeForUpload(result, metadata = {}) {
-  return {schemaVersion: SCHEMA_VERSION, agentId: 'pipeline-threat-model', scanner: result.scanner, release: text(metadata.release), repository: text(metadata.repository), commit: text(metadata.commit), branch: text(metadata.branch), policy: result.policy, stats: result.stats, issues: (result.issues || []).slice(0, 1000).map(item => ({id: item.id, ruleId: item.ruleId, title: item.title, severity: item.severity, path: item.path, recommendation: item.recommendation, fingerprint: item.fingerprint}))};
+  return {schemaVersion: SCHEMA_VERSION, agentId: 'pipeline-threat-model', scanner: result.scanner, release: text(metadata.release), repository: text(metadata.repository), commit: text(metadata.commit), branch: text(metadata.branch), origin: originFromMetadata(metadata), policy: result.policy, stats: result.stats, issues: (result.issues || []).slice(0, 1000).map(item => ({id: item.id, ruleId: item.ruleId, title: item.title, severity: item.severity, path: item.path, recommendation: item.recommendation, fingerprint: item.fingerprint}))};
 }
