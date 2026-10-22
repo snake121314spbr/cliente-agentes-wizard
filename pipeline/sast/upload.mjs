@@ -30,9 +30,32 @@ function assertToken(token) {
   }
 }
 
+function pipelineNetworkError(label, url, error) {
+  const code = String(error?.cause?.code || error?.cause?.errno || error?.name || 'FETCH_FAILED');
+  const host = new URL(url).hostname;
+  return new Error(`${label} indisponível (${code}). Verifique DNS, saída TCP/443, proxy e allowlist para ${host}.`, {cause: error});
+}
+
+async function pipelineFetch(label, url, options) {
+  try {
+    return await fetch(url, options);
+  } catch (error) {
+    throw pipelineNetworkError(label, url, error);
+  }
+}
+
+function pipelineResponseError(label, status, data) {
+  const code = typeof data?.code === 'string' ? data.code : 'HTTP_ERROR';
+  const stage = typeof data?.stage === 'string' ? data.stage : 'remote';
+  const detail = typeof data?.error === 'string' ? data.error.replace(/[\r\n]+/g, ' ').slice(0, 220) : 'O serviço não aceitou a solicitação.';
+  const retryable = data?.retryable === true ? ' Tente novamente após a janela indicada' : '';
+  return new Error(`${label} recusado (HTTP ${status}, ${code}, etapa ${stage}).${retryable} ${detail}`);
+}
+
 export async function uploadPipelineResult(url, token, payload) {
   assertToken(token);
-  const response = await fetch(safeUploadUrl(url), {
+  const safeUrl = safeUploadUrl(url);
+  const response = await pipelineFetch('Upload ao Console', safeUrl, {
     method: 'POST',
     redirect: 'error',
     signal: AbortSignal.timeout(15000),
@@ -46,7 +69,7 @@ export async function uploadPipelineResult(url, token, payload) {
   const body = await response.text();
   let data;
   try { data = JSON.parse(body); } catch { data = {raw: body.slice(0, 500)}; }
-  if (!response.ok) throw new Error(`Upload recusado (HTTP ${response.status}).`);
+  if (!response.ok) throw pipelineResponseError('Upload ao Console', response.status, data);
   return data;
 }
 
@@ -55,9 +78,10 @@ export async function uploadResult(url, token, payload) {
   return uploadPipelineResult(url, token, payload);
 }
 
-export async function checkPipelineConnection(url, token, agents = []) {
+export async function checkPipelineConnection(url, token, agents = [], metadata = {}) {
   assertToken(token);
-  const response = await fetch(safePipelineUrl(url, [CONSOLE_CONNECTION_PATH]), {
+  const safeUrl = safePipelineUrl(url, [CONSOLE_CONNECTION_PATH]);
+  const response = await pipelineFetch('Conexão com o Console', safeUrl, {
     method: 'POST',
     redirect: 'error',
     signal: AbortSignal.timeout(15000),
@@ -65,11 +89,15 @@ export async function checkPipelineConnection(url, token, agents = []) {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({agents: Array.isArray(agents) && agents.length ? agents.slice(0, 8) : undefined})
+    body: JSON.stringify({
+      agents: Array.isArray(agents) && agents.length ? agents.slice(0, 8) : undefined,
+      repository: typeof metadata?.repository === 'string' && metadata.repository.trim() ? metadata.repository.trim().slice(0, 240) : undefined,
+      origin: metadata?.origin && typeof metadata.origin === 'object' ? metadata.origin : undefined
+    })
   });
   const body = await response.text();
   let data;
   try { data = JSON.parse(body); } catch { data = {raw: body.slice(0, 500)}; }
-  if (!response.ok) throw new Error(`Teste de conexão recusado (HTTP ${response.status}).`);
+  if (!response.ok) throw pipelineResponseError('Teste de conexão', response.status, data);
   return data;
 }

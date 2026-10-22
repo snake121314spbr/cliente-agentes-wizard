@@ -1,15 +1,17 @@
 import {createHash} from 'node:crypto';
 import {lstat, readdir, readFile} from 'node:fs/promises';
 import path from 'node:path';
+import {originFromMetadata} from '../origin.mjs';
 
 /**
  * Small, deterministic SAST baseline for CI pipelines.
  *
  * The scanner is intentionally local-only: it reads the checked-out workspace,
- * never executes the target code and never sends source code anywhere. Teams
+ * never executes the target code. Its optional AI layer separately requires
+ * explicit consent before sending bounded, redacted source excerpts. Teams
  * can keep using a specialist SAST engine alongside this policy/evidence layer.
  */
-export const SCANNER_VERSION = '1.0.0';
+export const SCANNER_VERSION = '1.1.0';
 export const SCHEMA_VERSION = '1.0';
 export const DEFAULT_LIMITS = Object.freeze({
   maxFiles: 5000,
@@ -197,6 +199,7 @@ export async function scanProject(root, options = {}) {
 }
 
 export function normalizeForUpload(result, metadata = {}) {
+  const origin = originFromMetadata(metadata);
   const findings = (Array.isArray(result?.findings) ? result.findings : []).slice(0, 1000).map(finding => ({
     id: String(finding.id || finding.fingerprint || '').slice(0, 180),
     ruleId: String(finding.ruleId || '').slice(0, 80),
@@ -205,7 +208,8 @@ export function normalizeForUpload(result, metadata = {}) {
     file: String(finding.file || '').replaceAll('\\', '/').slice(0, 400),
     line: Math.max(1, Math.min(10_000_000, Number(finding.line) || 1)),
     recommendation: String(finding.recommendation || '').slice(0, 700),
-    fingerprint: String(finding.fingerprint || '').slice(0, 80)
+    fingerprint: String(finding.fingerprint || '').slice(0, 80),
+    ...(finding.source==='ai'?{source:'ai',confidence:finding.confidence,reviewRequired:true}: {})
   }));
   return {
     schemaVersion: SCHEMA_VERSION,
@@ -215,12 +219,14 @@ export function normalizeForUpload(result, metadata = {}) {
     repository: String(metadata.repository || '').slice(0, 240),
     commit: String(metadata.commit || metadata.sha || '').slice(0, 160),
     branch: String(metadata.branch || '').slice(0, 160),
+    origin,
     policy: {failOn: normalizeSeverity(result?.policy?.failOn || metadata.failOn || 'high'), passed: result?.policy?.passed === true},
     status: result?.status === 'partial' ? 'partial' : 'completed',
     startedAt: String(result?.startedAt || '').slice(0, 48),
     finishedAt: String(result?.finishedAt || '').slice(0, 48),
     stats: result?.stats || {},
     counts: result?.counts || {},
+    ...(result?.aiReview?{aiReview:result.aiReview}: {}),
     findings
   };
 }
@@ -231,11 +237,12 @@ const sarifRule = rule => ({id: rule.id, name: rule.name, shortDescription: {tex
 
 export function toSarif(result, metadata = {}) {
   const rules = new Map(RULES.map(rule => [rule.id, rule]));
+  if(result.findings.some(f=>f.source==='ai'))rules.set('LS-SAST-AI',{id:'LS-SAST-AI',name:'AI-assisted source review',message:'Evidence-grounded AI review candidate',recommendation:'Validate the code context and the proposed remediation before changing the application.'});
   return {
     $schema: 'https://json.schemastore.org/sarif-2.1.0.json',
     version: '2.1.0',
     runs: [{
-      tool: {driver: {name: result.scanner.name, version: result.scanner.version, informationUri: 'https://agentes.limaesilvatecnologia.com.br/recursos/sast-pipeline/', rules: RULES.map(sarifRule)}},
+      tool: {driver: {name: result.scanner.name, version: result.scanner.version, informationUri: 'https://agentes.limaesilvatecnologia.com.br/recursos/sast-pipeline/', rules: [...rules.values()].map(sarifRule)}},
       invocations: [{executionSuccessful: result.status !== 'failed', commandLine: 'lima-silva-sast', startTimeUtc: result.startedAt, endTimeUtc: result.finishedAt, properties: {release: metadata.release || '', commit: metadata.commit || ''}}],
       artifacts: [...new Set(result.findings.map(finding => finding.file))].map(uri => ({location: {uri}})),
       results: result.findings.map(finding => ({
@@ -244,7 +251,7 @@ export function toSarif(result, metadata = {}) {
         message: {text: `${finding.message}. ${finding.recommendation}`},
         locations: [{physicalLocation: {artifactLocation: {uri: finding.file}, region: {startLine: finding.line, startColumn: finding.column || 1}}}],
         partialFingerprints: {primaryLocationLineHash: finding.fingerprint},
-        properties: {severity: finding.severity}
+        properties: {severity: finding.severity,...(finding.source==='ai'?{source:'ai',confidence:finding.confidence,reviewRequired:true}:{})}
       }))
     }]
   };
@@ -258,7 +265,7 @@ export function toGitlabSast(result, metadata = {}) {
     message: finding.message,
     description: finding.recommendation,
     severity: finding.severity === 'critical' ? 'Critical' : finding.severity[0].toUpperCase() + finding.severity.slice(1),
-    confidence: 'High',
+    confidence: finding.source==='ai'?'Medium':'High',
     scanner,
     identifiers: [{type: 'sast', name: finding.ruleId, value: finding.ruleId}],
     location: {file: finding.file, start_line: finding.line, end_line: finding.line},
