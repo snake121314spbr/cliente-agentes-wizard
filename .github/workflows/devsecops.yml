@@ -14,7 +14,7 @@ jobs:
         with:
           node-version: 20
       - name: Install Lima e Silva toolkit
-        run: if [ -f manifest.json ] && [ -f pipeline-install.mjs ] && [ -f pipeline/sast/sast-agent.mjs ]; then node pipeline-install.mjs --offline --dest .; else curl --fail --proto '=https' --tlsv1.2 -o pipeline-install.mjs https://agentes.limaesilvatecnologia.com.br/downloads/devsecops-toolkit/1.0.0/install.mjs && node pipeline-install.mjs --dest .; fi
+        run: if [ -f manifest.json ] && [ -f pipeline-install.mjs ] && [ -f pipeline/sast/sast-agent.mjs ]; then node pipeline-install.mjs --offline --dest .; else curl --fail --proto '=https' --tlsv1.2 -o pipeline-install.mjs https://agentes.limaesilvatecnologia.com.br/downloads/devsecops-toolkit/1.1.0/install.mjs && node pipeline-install.mjs --dest .; fi
       - name: Test Console connection
         run: node pipeline/check-connection.mjs --agents pipeline-sast
       - name: SAST
